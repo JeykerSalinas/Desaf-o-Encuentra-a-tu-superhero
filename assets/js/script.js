@@ -4,31 +4,75 @@
 const myConsulta = (inputHero, DATABASE) => {
   $.ajax({
     // Endpoint API
-    url: `${DATABASE}/${inputHero}.json`,
+    url: `${DATABASE}${inputHero}.json`,
     type: "GET",
     dataType: "JSON",
     success: (data) => {
-      console.log(data.name);
-      $("#titulo").replaceWith(data.name);
-      $("#myImg").attr("src", data.images.lg);
+      let myData = data;
+      // Creando el gráfico de torta
+      const chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        title: {
+          text: `${myData.name} Power Stats`,
+        },
+        data: [
+          {
+            type: "pie",
+            startAngle: 180,
+            yValueFormatString: '##0""',
+            indexLabel: "{label} {y}",
+            dataPoints: [
+              { y: myData.powerstats.combat, label: "Combat" },
+              { y: myData.powerstats.durability, label: "Durability" },
+              { y: myData.powerstats.intelligence, label: "Intelligence" },
+              { y: myData.powerstats.power, label: "Power" },
+              { y: myData.powerstats.speed, label: "Speed" },
+              { y: myData.powerstats.strength, label: "Strenght" },
+            ],
+          },
+        ],
+      });
+      //Creando card para super heroe
+      const myCard =`
+      
+      <div id="cardContainer" class="col-6 card">
+      <div class="row g-0">
+      <div class="col-md-4 justify-center">
+          <img src="${myData.images.lg}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Aliases: ${myData.biography.aliases} </li>
+              <li class="list-group-item">Alignment: ${myData.biography.alignment}</li>
+              <li class="list-group-item">Alter-egos: ${myData.biography.alterEgos} </li>
+              <li class="list-group-item">First appearence: ${myData.biography.firstAppearance}</li>
+              <li class="list-group-item">Full name: ${myData.biography.fullName}</li>
+              <li class="list-group-item">Born in: ${myData.biography.placeOfBirth} </li>
+              <li class="list-group-item">Publisher: ${myData.biography.publisher} </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>`
+
+      $("#heroName").replaceWith(`<h2 class="col-12 text-center">${myData.name}</h2>`);      
+      $("#cardContainer").replaceWith(myCard
+        );      
+      chart.render();
     },
-    error: ()=>{
-        $("#myImg").attr("src", "./assets/img/Imagen 1.png");    
-    }
+    error: () => {
+      $("#myImg").attr("src", "./assets/img/Imagen 1.png");
+    },
   });
 };
 
 $(document).ready(function () {
-  const myHero = $("#myHero").val()
-  const URLBASE = "https://akabab.github.io/superhero-api/api/id";
-
   $("#myButton").on("click", () => {
-    console.log(myHero);
-    // myConsulta(myHero, URLBASE);
-  })
-  
-  
-  ;
+    const myHero = $("#myHero").val();
+    const URLBASE = "https://akabab.github.io/superhero-api/api/id/";
+    myConsulta(myHero, URLBASE);
+  });
 });
 
 //Falta el gráfico de torta, y arreglarlo para cuando haya un error, y para que aparezca el nombre del personaje y se vea el grafico

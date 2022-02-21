@@ -33,11 +33,10 @@ const myConsulta = (inputHero, DATABASE) => {
         ],
       });
       //Creando card para super heroe
-      const myCard =`
-      
+      const myCard = `
       <div id="cardContainer" class="col-6 card">
       <div class="row g-0">
-      <div class="col-md-4 justify-center">
+      <div class="col-md-4 d-flex justify-center align-items-center">
           <img src="${myData.images.lg}" class="img-fluid rounded-start" alt="...">
         </div>
         <div class="col-md-8">
@@ -54,15 +53,24 @@ const myConsulta = (inputHero, DATABASE) => {
           </div>
         </div>
       </div>
-    </div>`
+    </div>`;
 
-      $("#heroName").replaceWith(`<h2 class="col-12 text-center">${myData.name}</h2>`);      
-      $("#cardContainer").replaceWith(myCard
-        );      
+      $("#myImg").toggle(false);
+      $("#heroName").replaceWith(
+        `<h2 id="heroName" class="col-12 text-center my-2">${myData.name}</h2>`
+      );
+      $("#cardContainer").replaceWith(myCard);
       chart.render();
     },
     error: () => {
-      $("#myImg").attr("src", "./assets/img/Imagen 1.png");
+      $("#myImg").toggle(true);
+      $("#heroName").replaceWith(
+        `<span id="heroName" class="badge bg-danger col-6 mx-auto">SuperHero no encontrado, por favor repita la búsqueda</span>`
+      );
+      $("#cardContainer").replaceWith(`<div id="cardContainer"></div>`);
+      $("#chartContainer").replaceWith(
+        `<div id="chartContainer" class="col-6"></div>`
+      );
     },
   });
 };
